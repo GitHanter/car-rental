@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.plc.carrental.mapper.OrderMapper">
+    <insert id="createOrder" parameterType="com.plc.carrental.entity.ReservationOrder"
+            useGeneratedKeys="true" keyProperty="id">
+            INSERT INTO RESERVATION_ORDER (CAR_ID, RESERVED_BY, RESERVED_DATE,
+                                   PICK_UP_DATE, PICK_UP_TIME, RETURN_DATE, RETURN_TIME,
+                                   TOTAL_AMOUNT, RESERVE_STATUS,
+                                   CREATED_BY, CREATED_DATE, MODIFIED_BY, MODIFIED_DATE, VERSION)
+            VALUES
+            (
+                #{orderedCar.id} ,
+                #{customer.id} ,
+                #{reservedDate} ,
+                #{pickUpDate} ,
+                #{pickUpTime} ,
+                #{returnDate} ,
+                #{returnTime} ,
+                #{totalAmount} ,
+                #{reserveStatus} ,
+                #{createdBy} ,
+                #{createdTime} ,
+                #{modifiedBy} ,
+                #{modifiedTime} ,
+                #{version}
+            )
+    </insert>
+
+    <resultMap id="ReservationOrderMap" type="com.plc.carrental.entity.ReservationOrder"
+               extends="com.plc.carrental.mapper.CarMapper.AuditResultMap">
+        <result property="reservedDate" column="RESERVED_DATE" />
+        <result property="pickUpDate" column="PICK_UP_DATE" />
+        <result property="pickUpTime" column="PICK_UP_TIME" />
+        <result property="returnDate" column="RETURN_DATE" />
+        <result property="returnTime" column="RETURN_TIME" />
+        <result property="totalAmount" column="TOTAL_AMOUNT" />
+        <result property="reserveStatus" column="RESERVE_STATUS" />
+        <association property="orderedCar" javaType="com.plc.carrental.entity.Car">
+                <id property="id" column="CAR_ID" />
+                <result property="carBrand" column="CAR_BRAND" />
+                <result property="carModel" column="CAR_MODEL" />
+                <result property="carType" column="CAR_TYPE" />
+                <result property="color" column="COLOR" />
+                <result property="capacity" column="CAPACITY" />
+                <result property="plateNumber" column="PLATE_NUMBER" />
+                <result property="mileage" column="MILEAGE" />
+        </association>
+    </resultMap>
+    <select id="findOrdersByUsername" resultMap="ReservationOrderMap">
+        SELECT
+            RO.ID, RO.CAR_ID, RO.RESERVED_BY, RO.RESERVED_DATE, RO.PICK_UP_DATE, RO.PICK_UP_TIME, RO.RETURN_DATE, RO.RETURN_TIME, RO.TOTAL_AMOUNT, RO.RESERVE_STATUS, RO.CREATED_BY, RO.CREATED_DATE, RO.MODIFIED_BY, RO.MODIFIED_DATE, RO.VERSION,
+            C.CAR_BRAND, C.CAR_MODEL, C.CAR_TYPE, C.COLOR, C.CAPACITY, C.PLATE_NUMBER, C.MILEAGE
+        FROM RESERVATION_ORDER RO INNER JOIN CAR C on RO.CAR_ID = C.ID
+            INNER JOIN USERS U on RO.RESERVED_BY = U.ID
+        WHERE U.USER_NAME = #{username}
+    </select>
+
+    <select id="findOrderById" resultMap="ReservationOrderMap">
+        SELECT
+            RO.ID, RO.CAR_ID, RO.RESERVED_BY, RO.RESERVED_DATE, RO.PICK_UP_DATE, RO.PICK_UP_TIME, RO.RETURN_DATE, RO.RETURN_TIME, RO.TOTAL_AMOUNT, RO.RESERVE_STATUS, RO.CREATED_BY, RO.CREATED_DATE, RO.MODIFIED_BY, RO.MODIFIED_DATE, RO.VERSION,
+            C.CAR_BRAND, C.CAR_MODEL, C.CAR_TYPE, C.COLOR, C.CAPACITY, C.PLATE_NUMBER, C.MILEAGE
+        FROM RESERVATION_ORDER RO INNER JOIN CAR C on RO.CAR_ID = C.ID
+        WHERE RO.ID = #{orderId}
+    </select>
+
+    <update id="updateOrderStatus">
+        UPDATE RESERVATION_ORDER
+        SET RESERVE_STATUS = #{newStatus} ,
+            MODIFIED_BY = #{operator} ,
+            MODIFIED_DATE = #{operateTime} ,
+            VERSION = #{originalVersion} + 1
+        WHERE ID = #{orderId} AND VERSION = #{originalVersion}
+    </update>
+</mapper>

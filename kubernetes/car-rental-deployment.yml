@@ -1,0 +1,59 @@
+### In order to scale the deployment, put this on a separate file
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car-rental-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: car-rental-app
+  template:
+    metadata:
+      labels:
+        app: car-rental-app
+    spec:
+      containers:
+        - name: car-rental-app
+          image: gcr.io/${PROJECT_ID}/car-rental-app:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: REDIS_HOST
+              value: redis-master
+            - name: REDIS_PORT
+              value: "6379"
+            - name: MYSQL_HOST_PORT
+              value: mysql:3306
+            - name: MYSQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: app-username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: app-password
+            - name: OAUTH2_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: oauth2ClientId
+            - name: OAUTH2_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: oauth2Secret
+            - name: OAUTH2_JWT_KEY_VALUE
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: oauth2JwtKeyValue

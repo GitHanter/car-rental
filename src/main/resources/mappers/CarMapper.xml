@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.plc.carrental.mapper.CarMapper">
+    <resultMap id="AuditResultMap" type="com.plc.carrental.entity.AuditObject">
+        <id property="id" column="ID" />
+        <result property="createdBy" column="CREATED_BY" />
+        <result property="createdTime" column="CREATED_DATE" />
+        <result property="modifiedBy" column="MODIFIED_BY" />
+        <result property="modifiedTime" column="MODIFIED_DATE" />
+        <result property="version" column="VERSION" />
+    </resultMap>
+    <resultMap id="CarResultMap" type="com.plc.carrental.entity.Car" extends="AuditResultMap">
+        <result property="carBrand" column="CAR_BRAND" />
+        <result property="carModel" column="CAR_MODEL" />
+        <result property="carType" column="CAR_TYPE" />
+        <result property="color" column="COLOR" />
+        <result property="capacity" column="CAPACITY" />
+        <result property="plateNumber" column="PLATE_NUMBER" />
+        <result property="mileage" column="MILEAGE" />
+        <collection property="prices" ofType="com.plc.carrental.entity.CarDailyPrice">
+            <id property="id" column="PRICE_ID" />
+            <result property="dayOfYear" column="DATE_OF_YEAR" />
+            <result property="price" column="PRICE" />
+            <result property="isAvailable" column="IS_AVAILABLE" />
+            <result property="version" column="PRICE_VERSION" />
+        </collection>
+    </resultMap>
+
+
+    <select id="findAvailableCars" resultMap="CarResultMap">
+        SELECT c.id, c.car_brand, c.car_model, c.car_type, c.color, c.capacity, c.plate_number,
+               c.mileage, c.created_by, c.created_date, c.modified_by, c.modified_date, c.version,
+               cp.id PRICE_ID, cp.car_id, cp.date_of_year, cp.price, cp.is_available, cp.version PRICE_VERSION
+        FROM CAR c INNER JOIN CAR_PRICE cp ON c.ID = cp.CAR_ID
+        WHERE EXISTS
+            (SELECT count(CAR_ID) FROM CAR_PRICE cp2
+            WHERE cp2.DATE_OF_YEAR BETWEEN #{startDate} AND #{endDate} AND cp2.IS_AVAILABLE = 1
+            AND cp2.CAR_ID = cp.CAR_ID
+            HAVING COUNT(CAR_ID)=#{days})
+        AND cp.DATE_OF_YEAR BETWEEN #{startDate} AND #{endDate}
+        <if test="carId!=null">
+            AND c.ID = #{carId}
+        </if>
+        ORDER BY cp.date_of_year
+    </select>
+
+    <select id="findCarById" resultMap="CarResultMap">
+        SELECT c.id, c.car_brand, c.car_model, c.car_type, c.color, c.capacity, c.plate_number,
+               c.mileage, c.created_by, c.created_date, c.modified_by, c.modified_date, c.version
+        FROM CAR c WHERE c.id = #{carId}
+    </select>
+
+    <update id="updateCarAvailability">
+        UPDATE CAR_PRICE SET IS_AVAILABLE = 0
+        WHERE ID IN
+        <foreach collection="prices" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <update id="makeCarAvailable">
+        UPDATE CAR_PRICE SET IS_AVAILABLE = 1
+        WHERE CAR_ID = #{carId} AND DATE_OF_YEAR BETWEEN #{startDate} AND #{endDate}
+    </update>
+</mapper>

@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/car_rental
+    hikari:
+      username: carRental
+      password: 4XJyBEY75Hx4p6Hc
+  redis:
+    host: localhost
+    port: 6379
+security:
+  oauth2:
+    client:
+      client-id: 0b500524-8fdf-42cf-9a55-d1d069a85517
+      client-secret: a2aa10aCrL3HrHZSKQokfqxnR7KNcQDknj0oNi3cOXb8zmUFoAkjnovOjLcW
+    authorization:
+      jwt:
+        key-value: 123@!#
+    resource:
+      jwt:
+        key-value: 123@!#
+logging:
+  level:
+    root: DEBUG

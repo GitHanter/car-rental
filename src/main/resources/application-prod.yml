@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST_PORT}/car_rental
+    hikari:
+      username: ${MYSQL_USERNAME}
+      password: ${MYSQL_PASSWORD}
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+
+security:
+  oauth2:
+    client:
+      client-id: ${OAUTH2_CLIENT_ID}
+      client-secret: ${OAUTH2_CLIENT_SECRET}
+    authorization:
+      jwt:
+        key-value: ${OAUTH2_JWT_KEY_VALUE}
+    resource:
+      jwt:
+        key-value: ${OAUTH2_JWT_KEY_VALUE}

@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: car-rental
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    hikari:
+      connection-test-query: SELECT 1
+  redis:
+    client-name: ${spring.application.name}
+
+server:
+  port: 8080
+  servlet:
+    context-path: /${spring.application.name}
+security:
+  oauth2:
+    authorization:
+      token-key-access: permitAll()
+      check-token-access: isAuthenticated()
+    resource:
+      id: plc-car-rental
+
+mybatis:
+  mapper-locations: classpath*:/mappers/*Mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    use-generated-keys: true
+  type-handlers-package: com.plc.carrental.mybatis
+
+logging:
+  level:
+    root: INFO
+    com:
+      plc:
+        carrental: DEBUG
