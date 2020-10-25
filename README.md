@@ -32,7 +32,7 @@
 | data | Null when request is failed; Response data when request is success |
 | error| `true` or `false`. `true` when request is success; `false` when request is failed|
 
-###1.[**getAccessToken**] Get access token using OAuth2 `password` flow
+### 1.[**getAccessToken**] Get access token using OAuth2 `password` flow
 **This flow is not recommend on production environment**
 ```http
 ###
@@ -69,7 +69,7 @@ username={{customerName}}&password={{customerPassword}}&grant_type=password&scop
 }
 ```
 
-###2.[**getAvailableCars**]  Get available cars on the selected date range 
+### 2.[**getAvailableCars**]  Get available cars on the selected date range 
 ```http
 ###
 # @name getAvailableCars
@@ -110,7 +110,7 @@ Authorization: Bearer {{accessToken}}
 }
 ```
 
-###3.[**bookCar**]  Book a car by CarId
+### 3.[**bookCar**]  Book a car by CarId
 ```http
 ###
 # @name bookCar
@@ -158,7 +158,7 @@ This is a **Idempotent** API, If we submit same request multiple times, we'll ge
 }
 ```
 
-###4.[**getOrders**]  Get user's orders
+### 4.[**getOrders**]  Get user's orders
 ```http
 ###
 # @name getOrders
@@ -224,7 +224,7 @@ Authorization: Bearer {{accessToken}}
 }
 ```
 
-###5.[**cancelOrder**] Cancel order
+### 5.[**cancelOrder**] Cancel order
 ```http
 ###
 # @name cancelOrder
@@ -322,7 +322,7 @@ kubectl get deployment
 kubectl get service
 ```
 
-#API test
+# API test
 We use Visual Studio Code [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension to send the HTTP requests.
 Define following variable in [api.http](api.http) file to do the test
 - `@baseUrl`: e.g `http://localhost:8080/car-rental`
