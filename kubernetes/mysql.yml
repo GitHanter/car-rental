@@ -7,6 +7,7 @@ metadata:
 type: Opaque
 data:
   #echo -n '' | base64 encode values
+  #XGAf2WCNMbk2HCyQ
   root-password: WEdBZjJXQ05NYmsySEN5UQ==
   app-username: Y2FyUmVudGFs
   app-password: NFhKeUJFWTc1SHg0cDZIYw==
@@ -69,11 +70,15 @@ spec:
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
+            - name: mysql-initdb
+              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
             claimName: mysql-volumeclaim
-
+        - name: mysql-initdb
+          configMap:
+            name: mysql-initdb-config
 
 ---
 apiVersion: v1

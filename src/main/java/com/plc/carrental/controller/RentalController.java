@@ -127,11 +127,17 @@ public class RentalController {
         return response;
     }
 
+    /**
+     * should validate whether the order is belong to the customer or not
+     * Or whether the user is administrator or not
+     * @param orderId
+     * @return
+     */
     @RequestMapping(value="/cancel/{orderId}", method=RequestMethod.DELETE, produces={"application/json"})
     public ResponseMessage<Boolean> bookCar(@PathVariable Long orderId) {
         ResponseMessage<Boolean> response = new ResponseMessage<>();
         boolean result = carService.cancelOrder(orderId);
-        response.setError(result);
+        response.setError(!result);
         response.setData(result);
         return response;
     }

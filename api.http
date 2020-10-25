@@ -1,0 +1,41 @@
+@pickUpDate = {{$datetime "YYYY-MM-DD" 10 d}}
+@returnDate = {{$datetime "YYYY-MM-DD" 1 M}}
+
+
+###
+# @name getAccessToken
+POST {{baseUrl}}/oauth/token
+Authorization: Basic {{clientId}}:{{clientSecret}}
+Content-Type: application/x-www-form-urlencoded
+
+username={{customerName}}&password={{customerPassword}}&grant_type=password&scope=read,write
+
+###
+# @name getAvailableCars
+@accessToken = {{getAccessToken.response.body.access_token}}
+GET {{baseUrl}}/api/getAvailableCars?startDate={{pickUpDate}}&endDate={{returnDate}}
+Authorization: Bearer {{accessToken}}
+
+###
+# @name bookCar
+POST {{baseUrl}}/api/book
+Authorization: Bearer {{accessToken}}
+content-type: application/json
+
+{
+    "carId": {{getAvailableCars.response.body.data[0].id}},
+    "pickUpDate":"{{pickUpDate}}",
+    "pickUpTime":"12:00:00",
+    "returnDate":"{{returnDate}}",
+    "returnTime":"12:00:00"
+}
+
+###
+# @name getOrders
+GET {{baseUrl}}/api/getOrders
+Authorization: Bearer {{accessToken}}
+
+###
+# @name cancleOrder
+DELETE {{baseUrl}}/api/cancel/{{getOrders.response.body.data[0].id}}
+Authorization: Bearer {{accessToken}}

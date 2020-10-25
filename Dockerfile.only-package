@@ -1,0 +1,7 @@
+FROM adoptopenjdk/openjdk8:jdk8u265-b01-alpine-slim
+
+EXPOSE 8080
+
+ADD ./build/libs/*.jar app.jar
+
+ENTRYPOINT ["java","-jar","/app.jar"]
