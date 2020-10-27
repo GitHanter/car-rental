@@ -7,7 +7,7 @@
     - Book a car on a date range
     - Query a customer's orders
     - Cancel order
-3. Car price is stored by date, so a car can't be reserved by a different customer at different date range
+3. Car price is stored by date, so a car can be reserved by a different customer at different date range
 4. Use **redis distribute lock** to lock `car` when order a car of a date range; and to lock `order` when cancel a order
 5. Kubernetes resource files used to deploy mysql, redis, and this app to **GKE**
 
